@@ -4,7 +4,6 @@
   "type": "drupal-drush",
   "keywords": ["drush","toolkit"],
   "homepage": "https://github.com/ec-europa/toolkit-drush",
-  "installer-name": "toolkit_drush",
   "autoload": {
     "psr-4": {
       "Drush\\Commands\\toolkit_drush\\": ""
@@ -15,6 +14,7 @@
       "services": {
         "drush.services.yml": "^9"
       }
-    }
+    },
+    "installer-name": "toolkit_drush"
   }
 }
