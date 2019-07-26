@@ -13,7 +13,7 @@ use Drush\Commands\DrushCommands;
  * in root of your module, and a composer.json file that provides the name
  * of the services file to use.
  */
-class CheckModulesCommands extends DrushCommands
+class ToolkitCommands extends DrushCommands
 {
     /**
      * Gives a list of non authorised modules and/or security updates.
