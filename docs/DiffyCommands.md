@@ -24,7 +24,7 @@ This command allows you to take a snapshot of the current website IF the
 as an argument. By default the environment option will be set to production.
 
 This command will set Drupal variables **diffy_last_snapshot** and
-**diffy_prev_snapshot** for easy usage afterwards of the `diffy-project-diff`
+**diffy_prev_snapshot** for easy usage afterwards of the `diffy:project-diff`
 command.
 
 `./vendor/bin/drush diffy:project-snapshot <project-id> --environment=production`
@@ -37,7 +37,7 @@ or
 ### diffy:project-compare
 
 This command will request a comparison between two different environments. To
-use a baseline set please have a look at the `diffy-project-baseline` command.
+use a baseline set please have a look at the `diffy:project-baseline` command.
 The environments option can be of the following values: 'prod-stage', 'prod-dev'
 , 'stage-dev', 'custom', 'baseline-stage', 'baseline-prod', 'baseline-dev'
 
