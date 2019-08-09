@@ -1,12 +1,12 @@
 {
-  "name": "ec-europa/toolkit-drush",
+  "name": "ec-europa/toolkit_drush",
   "description": "Drush commandfiles for toolkit.",
-  "type": "drupal-drush",
+  "type": "drupal-module",
   "keywords": ["drush","toolkit"],
-  "homepage": "https://github.com/ec-europa/toolkit-drush",
+  "homepage": "https://github.com/ec-europa/toolkit_drush",
   "autoload": {
     "psr-4": {
-      "Drush\\Commands\\toolkit_drush\\": ""
+      "Drupal\\toolkit_drush\\": "src/"
     }
   },
   "extra": {
@@ -14,7 +14,6 @@
       "services": {
         "drush.services.yml": "^9"
       }
-    },
-    "installer-name": "toolkit_drush"
+    }
   }
 }
