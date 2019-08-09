@@ -79,7 +79,6 @@ class DiffyCommands extends DrushCommands {
             curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type:application/json', 'Authorization: Bearer ' . $token));
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
             $result = curl_exec($ch);
-            var_dump($result);
             if ($result !== false) {
                 $statusCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
                 if ($statusCode === 200) {
