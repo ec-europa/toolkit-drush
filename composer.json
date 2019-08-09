@@ -1,7 +1,9 @@
 {
   "name": "ec-europa/toolkit_drush",
-  "description": "Custom Drush 9 Commands",
+  "description": "Drush commandfiles for toolkit.",
   "type": "drupal-module",
+  "keywords": ["drush","toolkit"],
+  "homepage": "https://github.com/ec-europa/toolkit_drush",
   "autoload": {
     "psr-4": {
       "Drupal\\toolkit_drush\\": "src/"
