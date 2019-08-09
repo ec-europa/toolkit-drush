@@ -1,0 +1,5 @@
+services:
+  diffy.commands:
+    class: \Drupal\toolkit_drush\Commands\DiffyCommands
+    tags:
+      - { name: drush.command }

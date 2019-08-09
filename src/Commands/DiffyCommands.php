@@ -1,6 +1,6 @@
 <?php
 
-namespace Drush\Commands\toolkit_drush;
+namespace Drupal\toolkit_drush\Commands;
 
 use Drush\Commands\DrushCommands;
 
