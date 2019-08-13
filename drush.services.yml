@@ -3,3 +3,7 @@ services:
     class: \Drupal\toolkit_drush\Commands\DiffyCommands
     tags:
       - { name: drush.command }
+  toolkit.commands:
+    class: \Drupal\toolkit_drush\Commands\ToolkitCommands
+    tags:
+      - { name: drush.command }
