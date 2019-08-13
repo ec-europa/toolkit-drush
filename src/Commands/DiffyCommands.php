@@ -28,16 +28,16 @@ class DiffyCommands extends DrushCommands {
       throw new \Exception(dt('No key provided, can not request token.'));
     }
     else {
-      $ch = curl_init('https://app.diffy.website/api/auth/key');
+      $curl = curl_init('https://app.diffy.website/api/auth/key');
       $payload = json_encode(["key" => $key]);
-      curl_setopt($ch, CURLOPT_POSTFIELDS, $payload);
-      curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type:application/json']);
-      curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
-      $result = curl_exec($ch);
+      curl_setopt($curl, CURLOPT_POSTFIELDS, $payload);
+      curl_setopt($curl, CURLOPT_HTTPHEADER, ['Content-Type:application/json']);
+      curl_setopt($curl, CURLOPT_RETURNTRANSFER, TRUE);
+      $result = curl_exec($curl);
       $token = json_decode($result)->token;
 
       if ($result !== FALSE) {
-        $statusCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        $statusCode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
         if ($statusCode === 200) {
           $config = \Drupal::service('config.factory')->getEditable('drush_diffy.settings');
           $config->set('diffy_token', $token)->save();
@@ -48,7 +48,7 @@ class DiffyCommands extends DrushCommands {
           throw new \Exception(dt($msg, ['!statuscode' => $statusCode]));
         }
       }
-      curl_close($ch);
+      curl_close($curl);
     }
   }
 
@@ -83,14 +83,14 @@ class DiffyCommands extends DrushCommands {
         $payload['environment'] = $options['environment'];
       }
       $payload['baseUrl'] = $options['baseUrl'];
-      $ch = curl_init("https://app.diffy.website/api/projects/$projectId/screenshots");
+      $curl = curl_init("https://app.diffy.website/api/projects/$projectId/screenshots");
       $payload = json_encode($payload);
-      curl_setopt($ch, CURLOPT_POSTFIELDS, $payload);
-      curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type:application/json', 'Authorization: Bearer ' . $token]);
-      curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
-      $result = curl_exec($ch);
+      curl_setopt($curl, CURLOPT_POSTFIELDS, $payload);
+      curl_setopt($curl, CURLOPT_HTTPHEADER, ['Content-Type:application/json', 'Authorization: Bearer ' . $token]);
+      curl_setopt($curl, CURLOPT_RETURNTRANSFER, TRUE);
+      $result = curl_exec($curl);
       if ($result !== FALSE) {
-        $statusCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        $statusCode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
         if ($statusCode === 200) {
           $previousSnapshot = \Drupal::config('drush_diffy.settings')->get('diffy_last_snapshot');
           $config = \Drupal::service('config.factory')->getEditable('drush_diffy.settings');
@@ -105,7 +105,7 @@ class DiffyCommands extends DrushCommands {
           throw new \Exception(dt($msg, ['!statuscode' => $statusCode]));
         }
       }
-      curl_close($ch);
+      curl_close($curl);
     }
   }
 
@@ -132,14 +132,14 @@ class DiffyCommands extends DrushCommands {
       if (isset($options['environments'])) {
         $payload['environments'] = $options['environments'];
       }
-      $ch = curl_init("https://app.diffy.website/api/projects/$projectId/compare");
+      $curl = curl_init("https://app.diffy.website/api/projects/$projectId/compare");
       $payload = json_encode($payload);
-      curl_setopt($ch, CURLOPT_POSTFIELDS, $payload);
-      curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type:application/json', 'Authorization: Bearer ' . $token]);
-      curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
-      $result = curl_exec($ch);
+      curl_setopt($curl, CURLOPT_POSTFIELDS, $payload);
+      curl_setopt($curl, CURLOPT_HTTPHEADER, ['Content-Type:application/json', 'Authorization: Bearer ' . $token]);
+      curl_setopt($curl, CURLOPT_RETURNTRANSFER, TRUE);
+      $result = curl_exec($curl);
       if ($result !== FALSE) {
-        $statusCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        $statusCode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
         if ($statusCode === 200) {
           drush_log(dt('Diff created: @url.', ['@url' => 'https://app.diffy.website/#/diffs/' . $result]), 'ok');
         }
@@ -148,7 +148,7 @@ class DiffyCommands extends DrushCommands {
           throw new \Exception(dt($msg, ['!statuscode' => $statusCode]));
         }
       }
-      curl_close($ch);
+      curl_close($curl);
     }
   }
 
@@ -177,8 +177,8 @@ class DiffyCommands extends DrushCommands {
         $payload['snapshot1'] = $options['snapshot1'];
       }
       else {
-        $diffyPreviousSnapshot = \Drupal::config('drush_diffy.settings')->get('diffy_prev_snapshot');
-        $payload['snapshot1'] = isset($diffyPreviousSnapshot) ? $diffyPreviousSnapshot : '';
+        $diffyPrevSnapshot = \Drupal::config('drush_diffy.settings')->get('diffy_prev_snapshot');
+        $payload['snapshot1'] = isset($diffyPrevSnapshot) ? $diffyPrevSnapshot : '';
       }
       if (!empty($options['snapshot2'])) {
         $payload['snapshot2'] = $options['snapshot2'];
@@ -187,14 +187,14 @@ class DiffyCommands extends DrushCommands {
         $diffyLastSnapshot = \Drupal::config('drush_diffy.settings')->get('diffy_last_snapshot');
         $payload['snapshot2'] = isset($diffyLastSnapshot) ? $diffyLastSnapshot : '';
       }
-      $ch = curl_init("https://app.diffy.website/api/projects/$projectId/diffs");
+      $curl = curl_init("https://app.diffy.website/api/projects/$projectId/diffs");
       $payload = json_encode($payload);
-      curl_setopt($ch, CURLOPT_POSTFIELDS, $payload);
-      curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type:application/json', 'Authorization: Bearer ' . $token]);
-      curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
-      $result = curl_exec($ch);
+      curl_setopt($curl, CURLOPT_POSTFIELDS, $payload);
+      curl_setopt($curl, CURLOPT_HTTPHEADER, ['Content-Type:application/json', 'Authorization: Bearer ' . $token]);
+      curl_setopt($curl, CURLOPT_RETURNTRANSFER, TRUE);
+      $result = curl_exec($curl);
       if ($result !== FALSE) {
-        $statusCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        $statusCode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
         if ($statusCode === 200) {
           drush_log(dt('Diff created: @url.', ['@url' => 'https://app.diffy.website/#/diffs/' . $result]), 'ok');
         }
@@ -203,7 +203,7 @@ class DiffyCommands extends DrushCommands {
           throw new \Exception(dt($msg, ['!statuscode' => $statusCode]));
         }
       }
-      curl_close($ch);
+      curl_close($curl);
     }
   }
 
@@ -228,13 +228,13 @@ class DiffyCommands extends DrushCommands {
       if (empty($snapshotId)) {
         $snapshotId = \Drupal::config('drush_diffy.settings')->get('diffy_last_snapshot');
       }
-      $ch = curl_init("https://app.diffy.website/api/projects/$projectId/set-base-line-set/$snapshotId");
-      curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "PUT");
-      curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type:application/json', 'Authorization: Bearer ' . $token]);
-      curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
-      $result = curl_exec($ch);
+      $curl = curl_init("https://app.diffy.website/api/projects/$projectId/set-base-line-set/$snapshotId");
+      curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "PUT");
+      curl_setopt($curl, CURLOPT_HTTPHEADER, ['Content-Type:application/json', 'Authorization: Bearer ' . $token]);
+      curl_setopt($curl, CURLOPT_RETURNTRANSFER, TRUE);
+      $result = curl_exec($curl);
       if ($result !== FALSE) {
-        $statusCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        $statusCode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
         if ($statusCode === 200) {
           drush_log(dt('Snapshot @number set as baseline.', ['@number' => $snapshotId]), 'ok');
         }
@@ -243,7 +243,7 @@ class DiffyCommands extends DrushCommands {
           throw new \Exception(dt($msg, ['!statuscode' => $statusCode]));
         }
       }
-      curl_close($ch);
+      curl_close($curl);
     }
   }
 
@@ -270,10 +270,10 @@ class DiffyCommands extends DrushCommands {
   protected function waitForSnapshot($snapshotId, $wait) {
     if ($wait > 0) {
       $token = \Drupal::config('drush_diffy.settings')->get('diffy_token');
-      $ch = curl_init("https://app.diffy.website/api/snapshots/$snapshotId");
-      curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type:application/json', 'Authorization: Bearer ' . $token]);
-      curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
-      $result = json_decode(curl_exec($ch));
+      $curl = curl_init("https://app.diffy.website/api/snapshots/$snapshotId");
+      curl_setopt($curl, CURLOPT_HTTPHEADER, ['Content-Type:application/json', 'Authorization: Bearer ' . $token]);
+      curl_setopt($curl, CURLOPT_RETURNTRANSFER, TRUE);
+      $result = json_decode(curl_exec($curl));
 
       if ($result->state < 2) {
         drush_log(dt('Snapshot in progress: @results of @items.', ['@results' => $result->status->results, '@items' => $result->status->items]), 'ok');

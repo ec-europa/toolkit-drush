@@ -13,6 +13,10 @@ use Drush\Log\LogLevel;
  * In addition to this file, you need a drush.services.yml
  * in root of your module, and a composer.json file that provides the name
  * of the services file to use.
+ *
+ * @SuppressWarnings(PHPMD)
+ *
+ * @todo: This code should be refactored to meet PHPMD standards.
  */
 class ToolkitCommands extends DrushCommands {
 
@@ -87,11 +91,11 @@ class ToolkitCommands extends DrushCommands {
           // Check for security updates.
           // module_load_include('inc', 'update', 'update.report');.
           $availableUpdates = update_get_available(TRUE);
-          $moduleAvailableUpdates = update_calculate_project_data($availableUpdates);
+          $moduleAvailUpdates = update_calculate_project_data($availableUpdates);
 
-          if (isset($moduleAvailableUpdates[$moduleId]['security updates'])) {
-            $modulePath = drupal_get_path('module', $moduleAvailableUpdates[$moduleId]['name']);
-            drush_log('The module ' . $moduleAvailableUpdates[$moduleId]['name'] . ' with version ' . $moduleAvailableUpdates[$moduleId]['existing_version'] . ' has a security update! Update to ' . $moduleAvailableUpdates[$moduleId]['recommended'], LogLevel::ERROR);
+          if (isset($moduleAvailUpdates[$moduleId]['security updates'])) {
+            $modulePath = drupal_get_path('module', $moduleAvailUpdates[$moduleId]['name']);
+            drush_log('The module ' . $moduleAvailUpdates[$moduleId]['name'] . ' with version ' . $moduleAvailUpdates[$moduleId]['existing_version'] . ' has a security update! Update to ' . $moduleAvailUpdates[$moduleId]['recommended'], LogLevel::ERROR);
           }
         }
       }
