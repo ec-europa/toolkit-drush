@@ -4,6 +4,7 @@ namespace Drupal\toolkit_drush\Commands;
 
 use Drupal\Core\Extension\ExtensionDiscovery;
 use Drupal\Core\Extension\InfoParserDynamic;
+use Drupal\Component\Serialization\Yaml;
 use Drush\Commands\DrushCommands;
 use Drush\Log\LogLevel;
 
@@ -171,6 +172,56 @@ class ToolkitCommands extends DrushCommands
             // Delete variable 'project_id'.
             if (null !== $project_id) {
                 Drupal::configFactory()->getEditable('toolkit_drush.settings.project_id')->delete();
+            }
+        }
+    }
+
+    /**
+     * 
+     */
+    /**
+     * Checks for non-used modules in certain path crossreferenced with composer.lock.
+     *
+     * @command toolkit:toolkit-check-modules-unused
+     *
+     * @options $path     The path in which to check modules.
+     * @options $composer The composer lock file to crossreference modules with.
+     * @aliases toolkit:cmu
+     * @usage toolkit:toolkit-check-modules-unused
+     *   Gives a list of non authorised modules and/or security updates.
+     */
+    public function drush_toolkit_check_modules_unused($options = ['path' => 'modules/contrib', 'composer' => '../composer.lock'])
+    {
+        $composer = $options['composer'];
+        $path = $options['path'];
+        // If referenced make file does not exist, trow a warning.
+        if (!file_exists($composer)) {
+            drush_log(dt('Composer @composer does not exist. Showing all disabled modules in @path.', array('@composer' => $composer, '@path' => $path)), 'warning');
+        } else {
+            $composerLock = json_decode(file_get_contents($composer));
+        }
+
+        $modulesInCode = [];
+        if (isset($composerLock->packages)) {
+            foreach ($composerLock->packages as $package) {
+                if ($package->type === 'drupal-module') {
+                    $modulesInCode[] = substr($package->name, ($pos = strpos($package->name, '/')) !== false ? $pos + 1 : 0);
+                }
+            }
+        }
+
+        $modules = system_rebuild_module_data();
+        foreach ($modules as $module) {
+            if (strpos($module->getPath(), $path) !== false) {
+                $moduleName = $module->getName();
+                if ($module->status === 0 && empty($modulesInCode)) {
+                  drush_log(dt('Module @name is not enabled.', array('@name' => $moduleName)), 'warning');
+                }
+                if ($module->status === 0 && !empty($modulesInCode)) {
+                    if (in_array($moduleName, $modulesInCode)) {
+                        drush_log(dt('Module @name is not enabled.', array('@name' => $moduleName)), 'warning');
+                    }
+                }
             }
         }
     }
