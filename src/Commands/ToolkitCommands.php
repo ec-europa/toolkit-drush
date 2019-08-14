@@ -36,11 +36,11 @@ class ToolkitCommands extends DrushCommands {
     // Get list of all modules in the project.
     $modules = $this->checkProjectModules();
     // Get the module reviews list.
-    $d7ModulesList = $this->getModulesList();
+    $d8ModulesList = $this->getModulesList();
     // Instantiate arrays.
     $modulesName = [];
     $modulesArray = [];
-    if (!empty($modules) && !empty($d7ModulesList)) {
+    if (!empty($modules) && !empty($d8ModulesList)) {
       if (NULL !== $project_id) {
         $config = \Drupal::service('config.factory')->getEditable('toolkit_drush.settings');
         $config->set('project_id', $project_id)->save();
@@ -56,7 +56,7 @@ class ToolkitCommands extends DrushCommands {
         $status = TRUE;
       }
 
-      foreach ($d7ModulesList as $module) {
+      foreach ($d8ModulesList as $module) {
         // Get list of modules authorised for all projects.
         if ('0' == $module['restricted_use']) {
           $modulesName[] = $module['name'];
@@ -127,18 +127,18 @@ class ToolkitCommands extends DrushCommands {
     // Get list of all modules in the project.
     $modules = $this->checkProjectModules();
     // Get the module reviews list.
-    $d7ModulesList = $this->getModulesList();
+    $d8ModulesList = $this->getModulesList();
     // Instantiate arrays.
     $modulesName = [];
     $modulesArray = [];
-    if (!empty($modules) && !empty($d7ModulesList)) {
+    if (!empty($modules) && !empty($d8ModulesList)) {
       if (NULL !== $project_id) {
         $config = \Drupal::service('config.factory')->getEditable('toolkit_drush.settings');
         $config->set('project_id', $project_id)->save();
       }
 
       // Get list of modules authorised for all projects.
-      foreach ($d7ModulesList as $module) {
+      foreach ($d8ModulesList as $module) {
         if ('0' == $module['restricted_use']) {
           $modulesName[] = $module['name'];
           $modulesArray[] = $module;
@@ -256,14 +256,14 @@ class ToolkitCommands extends DrushCommands {
       // Request was ok? check response code.
       $statusCode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
       if (200 == $statusCode) {
-        $d7ModulesList = json_decode($result, TRUE);
+        $d8ModulesList = json_decode($result, TRUE);
       }
       else {
         drush_set_error(dt('Curl request failed with error code @statusCode.', ['@statusCode' => $statusCode]));
       }
     }
 
-    return $d7ModulesList;
+    return $d8ModulesList;
   }
 
   /**

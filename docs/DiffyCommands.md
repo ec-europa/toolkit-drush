@@ -5,6 +5,7 @@ after deployments.
 
 ## Requirements
 - Drush 9 >=
+- Drupal 8 >=
 - `export DIFFY_API_KEY=xxxxxxxxxxxxxxxxxxxxxxxxxx`
 
 ## Commands
