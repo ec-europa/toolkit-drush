@@ -56,6 +56,8 @@ class ToolkitCommands extends DrushCommands {
         $status = TRUE;
       }
 
+      $modulesInDev = $this->getModulesInDev();
+
       foreach ($d8ModulesList as $module) {
         // Get list of modules authorised for all projects.
         if ('0' == $module['restricted_use']) {
@@ -83,7 +85,8 @@ class ToolkitCommands extends DrushCommands {
         $moduleInfo = $infoParser->parse($modulePath . '/' . $moduleId . '.info.yml');
 
         if (FALSE !== strpos($modulePath, 'modules/contrib/') &&
-        !empty($moduleInfo['version']) && $moduleInfo['project'] == $moduleId) {
+        !empty($moduleInfo['version']) && $moduleInfo['project'] == $moduleId &&
+        !in_array($moduleId, $modulesInDev)) {
           if (!in_array($moduleId, $modulesName)) {
             drush_log('The use of the module ' . $moduleId . ' is not authorised by the QA team.', LogLevel::ERROR);
           }
@@ -137,6 +140,8 @@ class ToolkitCommands extends DrushCommands {
         $config->set('project_id', $project_id)->save();
       }
 
+      $modulesInDev = $this->getModulesInDev();
+
       // Get list of modules authorised for all projects.
       foreach ($d8ModulesList as $module) {
         if ('0' == $module['restricted_use']) {
@@ -164,7 +169,8 @@ class ToolkitCommands extends DrushCommands {
         $moduleInfo = $infoParser->parse($modulePath . '/' . $moduleId . '.info.yml');
 
         if (FALSE !== strpos($modulePath, 'modules/contrib') &&
-        !empty($moduleInfo['version']) && $moduleInfo['project'] == $moduleId) {
+        !empty($moduleInfo['version']) && $moduleInfo['project'] == $moduleId &&
+        !in_array($moduleId, $modulesInDev)) {
           // Compare actual module version with the minimum version authorised.
           $moduleName = $moduleInfo['project'];
           $getMinVersion = $this->searchForVersion($moduleName, $modulesArray);
@@ -227,6 +233,24 @@ class ToolkitCommands extends DrushCommands {
         }
       }
     }
+  }
+
+  /**
+   * Helper function to get the development modules.
+   */
+  public function getModulesInDev($composer = '../composer.lock') {
+    $modulesInDev = [];
+    if (file_exists($composer)) {
+      $composerLock = json_decode(file_get_contents($composer));
+      if (isset($composerLock->{'packages-dev'})) {
+        foreach ($composerLock->{'packages-dev'} as $package) {
+          if ($package->type === 'drupal-module') {
+            $modulesInDev[] = substr($package->name, ($pos = strpos($package->name, '/')) !== FALSE ? $pos + 1 : 0);
+          }
+        }
+      }
+    }
+    return $modulesInDev;
   }
 
   /**
