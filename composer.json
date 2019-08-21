@@ -15,5 +15,8 @@
         "drush.services.yml": "^9"
       }
     }
+  },
+  "require-dev": {
+    "openeuropa/code-review": "^0.3.0"
   }
 }
