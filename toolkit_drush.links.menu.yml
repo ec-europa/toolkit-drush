@@ -1,0 +1,13 @@
+toolkit_drush.admin_index:
+  title: Toolkit drush
+  route_name: toolkit_drush.admin_index
+  parent: system.admin_config_system
+  description: 'Configure Toolkit Drush settings.'
+  position: left
+  weight: -20
+toolkit_drush.diffy.admin_form:
+  title: 'Diffy settings'
+  parent: toolkit_drush.admin_index
+  description: 'Configure Diffy settings.'
+  weight: -10
+  route_name: toolkit_drush.diffy.admin_form

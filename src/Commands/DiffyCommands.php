@@ -39,7 +39,7 @@ class DiffyCommands extends DrushCommands {
       if ($result !== FALSE) {
         $statusCode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
         if ($statusCode === 200) {
-          $config = \Drupal::service('config.factory')->getEditable('drush_diffy.settings');
+          $config = \Drupal::service('config.factory')->getEditable('toolkit_drush.settings');
           $config->set('diffy_token', $token)->save();
           drush_log(dt('Diffy token refreshed.'), 'ok');
         }
@@ -66,7 +66,7 @@ class DiffyCommands extends DrushCommands {
    * @option baseUrl The base url of the site for which to take a snapshot.
    * @option wait The time to wait in between checks to see if snapshot is
    *  finished.
-   * @aliases diffy:pt
+   * @aliases diffy:ps
    * @usage diffy:project-snapshot
    *   Request screenshots for a project.
    */
@@ -77,7 +77,7 @@ class DiffyCommands extends DrushCommands {
   ]) {
     $projectId = $this->getDiffyProjectId($projectId);
     if (!empty($projectId)) {
-      $token = \Drupal::config('drush_diffy.settings')->get('diffy_token');
+      $token = \Drupal::config('toolkit_drush.settings')->get('diffy_token');
       $payload = [];
       if (isset($options['environment'])) {
         $payload['environment'] = $options['environment'];
@@ -92,10 +92,10 @@ class DiffyCommands extends DrushCommands {
       if ($result !== FALSE) {
         $statusCode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
         if ($statusCode === 200) {
-          $previousSnapshot = \Drupal::config('drush_diffy.settings')->get('diffy_last_snapshot');
-          $config = \Drupal::service('config.factory')->getEditable('drush_diffy.settings');
+          $previousSnapshot = \Drupal::config('toolkit_drush.settings')->get('diffy_last_snapshot');
+          $config = \Drupal::service('config.factory')->getEditable('toolkit_drush.settings');
           $config->set('diffy_prev_snapshot', $previousSnapshot)->save();
-          $config = \Drupal::service('config.factory')->getEditable('drush_diffy.settings');
+          $config = \Drupal::service('config.factory')->getEditable('toolkit_drush.settings');
           $config->set('diffy_last_snapshot', $result)->save();
           drush_log(dt('Snapshot created: @url.', ['@url' => 'https://app.diffy.website/#/snapshots/' . $result]), 'ok');
           $this->waitForSnapshot($result, $options['wait']);
@@ -127,7 +127,7 @@ class DiffyCommands extends DrushCommands {
   public function projectCompare($projectId = '', array $options = ['environments' => 'baseline-prod']) {
     $projectId = $this->getDiffyProjectId($projectId);
     if (!empty($projectId)) {
-      $token = \Drupal::config('drush_diffy.settings')->get('diffy_token');
+      $token = \Drupal::config('toolkit_drush.settings')->get('diffy_token');
       $payload = [];
       if (isset($options['environments'])) {
         $payload['environments'] = $options['environments'];
@@ -171,20 +171,20 @@ class DiffyCommands extends DrushCommands {
   public function projectDiff($projectId = '', array $options = ['snapshot1' => '', 'snapshot2' => '']) {
     $projectId = $this->getDiffyProjectId($projectId);
     if (!empty($projectId)) {
-      $token = \Drupal::config('drush_diffy.settings')->get('diffy_token');
+      $token = \Drupal::config('toolkit_drush.settings')->get('diffy_token');
       $payload = [];
       if (!empty($options['snapshot1'])) {
         $payload['snapshot1'] = $options['snapshot1'];
       }
       else {
-        $diffyPrevSnapshot = \Drupal::config('drush_diffy.settings')->get('diffy_prev_snapshot');
+        $diffyPrevSnapshot = \Drupal::config('toolkit_drush.settings')->get('diffy_prev_snapshot');
         $payload['snapshot1'] = isset($diffyPrevSnapshot) ? $diffyPrevSnapshot : '';
       }
       if (!empty($options['snapshot2'])) {
         $payload['snapshot2'] = $options['snapshot2'];
       }
       else {
-        $diffyLastSnapshot = \Drupal::config('drush_diffy.settings')->get('diffy_last_snapshot');
+        $diffyLastSnapshot = \Drupal::config('toolkit_drush.settings')->get('diffy_last_snapshot');
         $payload['snapshot2'] = isset($diffyLastSnapshot) ? $diffyLastSnapshot : '';
       }
       $curl = curl_init("https://app.diffy.website/api/projects/$projectId/diffs");
@@ -224,9 +224,9 @@ class DiffyCommands extends DrushCommands {
   public function projectBaseline($projectId = '', $snapshotId = '') {
     $projectId = $this->getDiffyProjectId($projectId);
     if (!empty($projectId)) {
-      $token = \Drupal::config('drush_diffy.settings')->get('diffy_token');
+      $token = \Drupal::config('toolkit_drush.settings')->get('diffy_token');
       if (empty($snapshotId)) {
-        $snapshotId = \Drupal::config('drush_diffy.settings')->get('diffy_last_snapshot');
+        $snapshotId = \Drupal::config('toolkit_drush.settings')->get('diffy_last_snapshot');
       }
       $curl = curl_init("https://app.diffy.website/api/projects/$projectId/set-base-line-set/$snapshotId");
       curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "PUT");
@@ -252,10 +252,10 @@ class DiffyCommands extends DrushCommands {
    */
   protected function getDiffyProjectId($projectId) {
     if (empty($projectId)) {
-      $projectId = \Drupal::config('drush_diffy.settings')->get('diffy_project_id');
+      $projectId = \Drupal::config('toolkit_drush.settings')->get('diffy_project_id');
     }
     else {
-      $config = \Drupal::service('config.factory')->getEditable('drush_diffy.settings');
+      $config = \Drupal::service('config.factory')->getEditable('toolkit_drush.settings');
       $config->set('diffy_project_id', $projectId)->save();
     }
     if (empty($projectId)) {
@@ -269,7 +269,7 @@ class DiffyCommands extends DrushCommands {
    */
   protected function waitForSnapshot($snapshotId, $wait) {
     if ($wait > 0) {
-      $token = \Drupal::config('drush_diffy.settings')->get('diffy_token');
+      $token = \Drupal::config('toolkit_drush.settings')->get('diffy_token');
       $curl = curl_init("https://app.diffy.website/api/snapshots/$snapshotId");
       curl_setopt($curl, CURLOPT_HTTPHEADER, ['Content-Type:application/json', 'Authorization: Bearer ' . $token]);
       curl_setopt($curl, CURLOPT_RETURNTRANSFER, TRUE);

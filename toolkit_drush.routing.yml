@@ -1,0 +1,15 @@
+toolkit_drush.admin_index:
+  path: '/admin/config/system/toolkit_drush'
+  defaults:
+    _controller: '\Drupal\system\Controller\SystemController::systemAdminMenuBlockPage'
+    _title: 'Toolkit drush'
+  requirements:
+    _permission: 'access administration pages'
+
+toolkit_drush.diffy.admin_form:
+  path: '/admin/config/system/toolkit_drush/diffy'
+  defaults:
+    _form: '\Drupal\toolkit_drush\Form\DiffySettingsForm'
+    _title: 'Diffy Settings'
+  requirements:
+    _permission: 'access administration pages'
