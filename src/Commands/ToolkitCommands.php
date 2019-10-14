@@ -36,7 +36,8 @@ class ToolkitCommands extends DrushCommands {
     // Get list of all modules in the project.
     $modules = $this->checkProjectModules();
     // Get the module reviews list.
-    $d8ModulesList = $this->getModulesList();
+    $url = 'https://webgate.ec.europa.eu/fpfis/qa/api/v1/package-reviews?machine_name=&version=8.x&type=module&review_status=All';
+    $d8ModulesList = $this->getModulesList($url);
     // Instantiate arrays.
     $modulesName = [];
     $modulesArray = [];
@@ -130,7 +131,8 @@ class ToolkitCommands extends DrushCommands {
     // Get list of all modules in the project.
     $modules = $this->checkProjectModules();
     // Get the module reviews list.
-    $d8ModulesList = $this->getModulesList();
+    $url = 'https://webgate.ec.europa.eu/fpfis/qa/api/v1/package-reviews?machine_name=&version=8.x&type=module&review_status=All';
+    $d8ModulesList = $this->getModulesList($url);
     // Instantiate arrays.
     $modulesName = [];
     $modulesArray = [];
@@ -236,6 +238,36 @@ class ToolkitCommands extends DrushCommands {
   }
 
   /**
+   * Checks for mandatory modules in system module data.
+   *
+   * @command toolkit:toolkit-check-modules-mandatory
+   *
+   * @aliases toolkit:cmm
+   * @usage toolkit:toolkit-check-modules-mandatory
+   *   Checks for mandatory modules in system module data.
+   */
+  public function drushToolkitCheckModulesMandatory() {
+    $modules = system_rebuild_module_data();
+    $profile = drupal_get_profile();
+
+    // Todo create endpoint for mandatory modules.
+    $url = 'http://web:8080/web/api/v1/package-reviews?machine_name=&version=8.x&type=All&review_status=All&mandatory=1';
+    $mandatoryModules = $this->getModulesList($url);
+
+    foreach ($mandatoryModules as $mandatoryModule) {
+      $mandatoryModuleName = $mandatoryModule['name'];
+      if (!in_array($mandatoryModuleName, array_keys($modules))) {
+        drush_log(dt('Module @name is mandatory but is missing.', ['@name' => $mandatoryModuleName]), 'warning');
+      }
+      else {
+        if ($modules[$mandatoryModuleName]->status === 0) {
+          drush_log(dt('Module @name is mandatory but is disabled.', ['@name' => $mandatoryModuleName]), 'warning');
+        }
+      }
+    }
+  }
+
+  /**
    * Helper function to get the development modules.
    */
   public function getModulesInDev($composer = '../composer.lock') {
@@ -265,15 +297,17 @@ class ToolkitCommands extends DrushCommands {
   }
 
   /**
-   * Helper function to get the list of authorised modules.
+   * Helper function to get the list of modules.
+   *
+   * @param string $url
+   *   The api url from which to retreive the module list.
    */
-  public function getModulesList() {
-    // Get list of authorised modules.
-    $url = 'https://webgate.ec.europa.eu/fpfis/qa/api/v1/package-reviews?machine_name=&version=8.x&type=module&review_status=All';
+  public function getModulesList($url) {
 
     $curl = curl_init($url);
     curl_setopt($curl, CURLOPT_RETURNTRANSFER, TRUE);
     $result = curl_exec($curl);
+    $d8ModulesList = [];
 
     // If request did not fail.
     if (FALSE !== $result) {
