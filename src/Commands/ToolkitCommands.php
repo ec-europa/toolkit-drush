@@ -248,10 +248,9 @@ class ToolkitCommands extends DrushCommands {
    */
   public function drushToolkitCheckModulesMandatory() {
     $modules = system_rebuild_module_data();
-    $profile = drupal_get_profile();
 
     // Todo create endpoint for mandatory modules.
-    $url = 'http://web:8080/web/api/v1/package-reviews?machine_name=&version=8.x&type=All&review_status=All&mandatory=1';
+    $url = 'https://webgate.ec.europa.eu/fpfis/qa/api/v1/package-reviews?machine_name=&version=8.x&type=All&review_status=All&mandatory=1';
     $mandatoryModules = $this->getModulesList($url);
 
     foreach ($mandatoryModules as $mandatoryModule) {
