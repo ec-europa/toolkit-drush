@@ -10,21 +10,21 @@ use Drupal\Core\Form\FormStateInterface;
  */
 class DiffySettingsForm extends ConfigFormBase {
 
-  /** 
+  /**
    * Config settings.
    *
    * @var string
    */
   const SETTINGS = 'toolkit_drush.settings';
 
-  /** 
+  /**
    * {@inheritdoc}
    */
   public function getFormId() {
     return 'toolkit_drush_admin_settings';
   }
 
-  /** 
+  /**
    * {@inheritdoc}
    */
   protected function getEditableConfigNames() {
@@ -33,7 +33,7 @@ class DiffySettingsForm extends ConfigFormBase {
     ];
   }
 
-  /** 
+  /**
    * {@inheritdoc}
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
@@ -43,12 +43,12 @@ class DiffySettingsForm extends ConfigFormBase {
       '#type' => 'textfield',
       '#title' => $this->t('Project ID'),
       '#default_value' => $config->get('diffy_project_id'),
-    ];  
+    ];
 
     return parent::buildForm($form, $form_state);
   }
 
-  /** 
+  /**
    * {@inheritdoc}
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
